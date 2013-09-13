@@ -1,0 +1,347 @@
+SOUPBOX v0.0 [beta] January 25, 1998
+
+ This is a beta version of SOUPbox, a collection of conversion programs
+ which convert SOUP offline reader packets used by Internet-compatible
+ software to .PKT's which can be read by fido-compatible BBS programs.
+
+ It is intended for use by fido-style BBS sysops and point node operators.
+
+ This is being distributed as-is and is for noncommercial use only. If
+ you modify the source code in any way, please rename the archive and
+ also be sure to indicate what you've changed.
+
+ This has been tested using VSOUP for os/2 on a Binkley/Squish/Maximus
+ system but should be adaptable to other configurations including WSOUP
+ (Windows) and SOUPER (DOS).
+
+ You will need to install VSOUP (or another program that downloads SOUP
+ packets) and be able to connect via an Internet service provider to
+ usefully employ the SOUPbox programs.
+
+ I neither guarantee this to be bug-free (it's not) nor guarantee that
+ you won't get your sysadmin upset at you if you misuse this program.
+
+How does it work?
+
+ Basically, SOUP is an offline reader format which does for the Internet
+ what formats like QWK do for the BBS world. It just downloads all of your
+ messages so that they can be stored and read or processed later.
+
+ Programs like VSOUP and SOUPER download the messages and store them as
+ a series of text files, one for each message area.
+
+ News server (NNTP)
+        |                                                .msg
+ Internet Service _______modem<------>modem___OS/2---VSOUP--->souppkt
+ Provider (ISP)                                       ^         | .pkt
+        |                                         .msg|         v
+ E-Mail server (POP3, SMTP)                         pktsoup<---BBS software
+                                                           .pkt
+
+ The SOUPbox archive contains two conversion programs; one (souppkt) converts
+ Internet SOUP messages to BBS (*.pkt) files and the other (pktsoup) converts
+ BBS messages back into SOUP.
+
+ Note that the SOUP *.msg files do not use the same format as fido *.msg files.
+
+ There are two versions of these; one is for DOS (souppkt, pktsoup) and the
+ other is for OS2 (souppkt2, pktsoup2).
+
+ If you're not using os/2, install the DOS versions of the programs.
+
+ The program (MS-C 6.00 source code) listing is the same for both versions.
+
+What files are created by SOUP?
+
+ The VSOUP or SOUPER programs (required but not included in this archive)
+ typically uses the following files:
+ NEWSRC         a list of newsgroups to be downloaded
+                the name of each group is followed by : and the number of the
+                last article read - a ! indicates you're not subscribed to a
+                group
+ SCORE          an optional file used to filter incoming news by ignoring
+                posts with certain text in the headers
+ AREAS          a list of *.msg files that have been downloaded from the net
+ REPLIES        a list of *.msg files waiting to be uploaded to the net
+ NEWS.MSG       newsgroup posts waiting to be uploaded
+ MAIL.MSG       e-mail waiting to be uploaded
+ 000????.MSG    downloaded messages, one file per message area or newsgroup
+
+ Note that the conversion programs in the SOUPbox archive expect these files
+ to be in uncompressed format (unix text with binary length on each message).
+
+ This appears to be compatible with programs such as VSOUP.
+
+What do the SOUPbox programs do with all of this?
+
+ The conversion utilities included here convert SOUP files (*.msg) to Fido-
+ style packet (*.pkt) files and vice-versa. This lets you read Internet
+ messages into BBS software.
+
+ There are a number of differences in message format between BBSs and
+ Internet, mostly in the message headers and the addresses. The souppkt
+ program changes addresses like "carl.austin.bennett@pausecafe.gryn.org"
+ into their BBS equivalents, ie: "Carl Austin Bennett 1:249/116.0" and
+ writes Fido-compatible headers. It also splits any overly-long messages.
+
+ The pktsoup program converts and removes these Fido-style message headers
+ and changes any addresses back into their Internet counterparts.
+
+ Message dates are changed to indicate the proper timezone, BBS origin and
+ tear lines are removed and "area:" is changed back to "Newsgroups:".
+
+How does this fit into a BBS or pointnode setup?
+
+ The SOUPbox programs need to be assigned a Fido-style address, much like
+ another BBS or point-node system would have an address when connecting
+ via mailer and tosser programs. A pointnode address is sufficient.
+
+ For instance, a BBS with address 1:249/116.0 could communicate with a set
+ of SOUPbox programs using the address 1:249/116.1; the mailer program on
+ the BBS would be configured to put all mail for this address on "hold"
+ instead of dialing, then the SOUPbox programs would convert this mail and
+ VSOUP or SOUPER could then upload it to an Internet service provider.
+
+ Typically, a BBS mail tosser will give the same base filename to all mail
+ destined for one address. If today's mail for a node is in 12345678.su*
+ then tomorrow's mail for that node will be found in 12345678.mo*
+
+ Uncompressed mail packets will have names ending in *.pkt or *.?ut but will
+ also follow a consistent naming pattern. To determine the exact filename to
+ be used, just put some mail on "hold", addressed for the desired BBS address,
+ and see what files are created by the BBS mail tosser.
+
+ SOUPbox works only with uncompressed packets; if your BBS software is
+ creating compressed archives (ARC, ZIP, ARJ, LHA...) you'll need to have
+ a .bat or .cmd file uncompress them first before running pktsoup.
+
+ The souppkt converter creates uncompressed *.pkt files which may be moved
+ directly into your system's inbound directory and tossed normally.
+
+How does this work with Binkley (or Portal) -style mailers?
+
+ Binkley-style systems have the mail tosser do all of the routing
+ and compression of packets; this works well with SOUPbox as it allows
+ the tosser to be configured to do things like (in Squish's route.cfg):
+
+   route hold noarc 1:249/116.1
+
+ This leaves all mail addressed to 116.1 in the outbound directory in
+ uncompressed form. It takes both netmail and echomail and puts them into
+ standard Fido-style packets (the names will be 00000001.hut in this case)
+
+How does this work with ArcmailAttach (FrontDoor/InterMail) mailers?
+
+  These mailers operate a little differently; they will always compress
+  outbound echomail packets and the tosser will completely ignore outbound
+  netmail as it's handled by the mailer itself.
+
+  The routing commands to put mail for a node on "hold" instead of sending
+  it normally are handled by the mailer, not the tosser. This means changing
+  ROUTE.IM or ROUTE.FD to "hold" any mail for SOUPbox instead of sending it.
+
+  As the echomail is compressed (ARC or PKPAK are the defaults) a batch file
+  must be used to check for these bundles, move them and unpack them before
+  they can be processed by SOUPbox.
+
+  Also, as the tosser is not processing outbound netmail at all, a special
+  echo named EMAIL must be created on your pointnode or BBS for outbound
+  Internet e-mail. This way, your outbound e-mail gets packed with the rest
+  of your outgoing messages instead of being left in your netmail area.
+
+How do I configure these programs?
+
+  Much of the configuration for the SOUPbox programs is in SOUPBOX.CFG,
+  which must be in the current directory for the conversion to be run.
+
+  The following are recognized in SOUPBOX.CFG; anything else is ignored:
+
+Origin      <fido-style 4D address>
+  This is the address of the SOUPbox conversion program itself. This address
+  serves as one side of a gateway between the BBS and the Internet world.
+  This should be a 4D (point-node) address, ie:
+  Origin      1:249/116.1
+
+  All messages being converted to fido-style packets will have this as the
+  originating address. Your mailer or tosser must be configured to accept
+  echomail from a "system" at this address and to put outbound messages for
+  this address on "hold" instead of sending them via mailer or routed netmail.
+
+Domain      <fido-style 4D address> <internet domain name>
+  This is the address assigned to a BBS or pointnode which is using the
+  SOUPbox programs to access Internet message areas. If more than one
+  system is listed, the first one must be a Fido-style mail hub feeding the
+  others.
+
+  The internet domain name is the name of this (these) computer(s) for
+  sending/receiving Internet e-mail. This may point to an existing gateway
+  elsewhere or to a system able to put all mail for an entire subdomain into
+  one POP3 mailbox (such as an Internet presence provider or ml.org's Monolith
+  Mail Depot beta)
+  Domain      1:249/116.0 pausecafe.home.ml.org
+  Domain      1:249/117.0 cyberspace.gryn.org
+
+  Note that it is possible to override this default address for individual
+  users using Replace, ReplaceAll or Alias. (optional)
+
+Reply       <filename>
+  The name of the (uncompressed) fido-style pkt file containing messages
+  to be converted to Internet SOUP format. If your tosser creates only
+  compressed (*.mo0, *.tu*... *.sa*, *.su*) bundles, these will need to
+  be unZIPped or unARCed before processing by pktsoup.exe
+
+  The filename should therefore normally end in pkt, out, hut or ?ut,
+  ie: Reply c:\outbound\12345678.pkt
+
+  Note that all SOUP (*.msg) files and inbound pkt's are placed in the
+  current directory; your .bat files must move these pkt's to your
+  tosser/BBS inbound directory once souppkt conversion is complete
+
+TimeZone    -0500
+  This appears on the date/time of outgoing e-mail and is -0800 in
+  Vancouver, -0500 in Montr‚al and +0000 in London, England. Internet
+  programs use this information to convert e-mail time to another region.
+
+  SOUPbox ignores the timezone information on incoming mail.
+
+E-mail      email
+  If incoming e-mail is to be converted to netmail, indicate the name used
+  by VSOUP or SOUPER for the e-mail area (normally EMAIL). This information
+  is also needed to prevent SOUPbox from including the "Newsgroups:" line
+  on outgoing e-mail if "EMAIL" has been created as a BBS echomail area.
+
+Split       14000
+  This is the approximate length limit before SOUPbox continues text as a
+  second (or third...) message. Note that this value will be exceeded in
+  order not to split messages in the middle of a line or paragraph of text.
+
+Encode      <program> <msgheader> <file to attach>
+  (optional) This allows an external program to be installed to
+  automatically encode files as e-mail and send them via the Internet.
+  The external program will normally call a mime/base64 or a uuencode
+  utility, either of which accept a binary file and generate an encoded
+  text file. The program should also delete the original file after
+  conversion. This is usually used to automatically send BBS mail to
+  long-distance hubs inexpensively by sending it as e-mail file-attach.
+
+  The <program> is normally a small batch file like:
+    move \binkley\out\%1 %1
+    mime64 %1 %2 -e
+    del %1
+  where %1 is the base filename (no path) of the original file and %2 is
+  the name of the file to be created by the encoder program. Note that
+  uuencode and mime64 encoders, while freely available, must be downloaded
+  separately as they're not built into this version of SOUPbox.
+
+  The <msgheader> is a small text file which is added to the encoded text
+  before it's sent as e-mail. It must (at a minimum) contain the From:,
+  To: and Subject: fields:
+    To: downlink@wherever.com
+    From: carlb@adan.kingston.net
+    Subject: fido-mail attached
+    Mime-Version: 1.0
+
+  One "encode" line is included in SOUPbox.cfg for each downlink, ie:
+   Encode      encode.bat downlink.hdr c:\binkley\out\00012345.*
+
+Decode      <program> <areaname>
+  (optional) this runs an external program to decode files attached to
+  incoming Internet messages in specified message areas. The program must
+  be one that removes message headers and plaintext, such as uudoall or
+  mime64 for os/2 users. These decoders are not included with SOUPbox.
+
+  The external program is called with the *.msg filename and the name of
+  the message area (either EMAIL or a newsgroup name) as parameters, ie:
+
+  Decode      decode.bat alt.binaries.
+
+  where decode.bat (decode.cmd for os/2 users) contains:
+    uudecode %1
+
+  If the original file is moved, renamed or deleted within this .bat file,
+  the messages for this area will not be gated to echomail at all. This may
+  be useful when processing alt.binaries.* posts where plaintext is ignored.
+
+Replace <BBS e-mail address> <individual e-mail address>
+ReplaceAll <BBS e-mail address> <individual e-mail address>
+Alias <BBS e-mail address> <individual e-mail address>
+  (optional) These are used to indicate that a different address is to
+  be used for one SOUPbox user instead of the default first.lastname@domain
+
+  This is useful if e-mail is being forwarded from individual userid's on
+  shell accounts (.forward), poboxes.com addresses (http://www.netforward.com)
+  or being picked up directly from a POP3 mailbox on an ISP or an Internet
+  presence provider such as softhome.net or usa.net
+
+  The "To:" field on forwarded mail is that of the original message and
+  does not get changed by the Internet mail forwarding process. This means
+  that it's possible to forward many individual addresses from assorted
+  Internet sites to one individual POP3 mailbox, download all the mail at
+  once using SOUP, then have SOUPbox address it to individual usernames
+  based on the Internet address originally in the message's "To:" field.
+
+  For instance, if the entire pausecafe.home.ml.org subdomain were forwarded
+  to carlb@adan.kingston.net, SOUPbox could be configured as:
+  Origin 1:249/116.1
+  Domain 1:249/116.0 pausecafe.home.ml.org
+  Replace carl.austin.bennett@pausecafe.home.ml.org carlb@adan.kingston.net
+  Replace sysop@pausecafe.home.ml.org carlb@adan.kingston.net
+
+  This would cause e-mail "to: carlb@adan.kingston.net" to be converted in
+  the same way as e-mail "to: carl.austin.bennett@pausecafe.home.ml.org"
+  and become netmail from 1:249/116.1 to: Carl Austin Bennett 1:249/116.0
+
+  There are three versions of this:
+  Replace      - uses the individual user's address on all e-mail (not news)
+  ReplaceAll   - uses the individual user's address on both e-mail and news
+  Alias        - only uses the individual user's address for incoming e-mail
+
+  This is done so that SOUPbox can optionally be set to recognize forwarded
+  e-mail without having the individual user address appear on newsgroup
+  postings.
+
+  It's unfortunate that this is needed, but newsgroup posts are the largest
+  source of e-mail addresses for "spammers" who gather your address to send
+  large quantities of unsolicited commercial e-mail. Some users simply do
+  not want their e-mail address in the From: field on usenet for this reason.
+
+What Internet resources are available or needed?
+
+  At a minimum, to use SOUPbox you'll need a connection to an Internet
+  service provider and a working VSOUP (os/2) SOUPER (dos) or WSOUP
+  (windows) installation to download e-mail and newsgroups.
+
+  You'll most likely also want an e-mail address for each person who'll
+  be using SOUPbox; individual addresses may be obtained at netforward.com
+  and forwarded to an existing POP3 e-mail mailbox. There is a project
+  currently in beta test at ml.org to forward an entire subdomain (the
+  Monolith Mail Depot, not yet fully available) and this same service
+  may be available commercially from Internet presence providers as part
+  of a virtual domain hosting service.
+
+  Individual POP3 mailboxes are available from usa.net and softhome.net
+
+  Outbound e-mail (SMTP) servers are usually provided by Internet service
+  providers; if news (NNTP) isn't provided by your ISP, there are a limited
+  number of free servers listed in the NNTP FAQ available on the web.
+
+  These "free servers" are well known for their unreliability but there
+  are also a few commercial NNTP servers available for a price. Please
+  resist the temptation to download thousands of groups from a server
+  just because it's there; this loads the system and interferes with others.
+
+  There are a number of existing e-mail <-> netmail gateways on Fido and
+  other amateur networks; not all provide news and many object to routing
+  files and mailing lists, but using an existing gateway for ordinary
+  e-mail and SOUPbox for Usenet news can sometimes be a useful combination.
+
+  Many resources have already been lost to the online community due to
+  abuse - everything from anon.penet.fi to the e-mail to news gateways
+  to the fidonet.org (1:1/31) gate are now only distant memories.
+
+  Please be careful to use BBS and Internet resources with respect for
+  other users so as not to overload the few useful services that remain.
+
+This is SOUPbox v0.0 beta; please send comments and bug reports to:
+ Carl Austin Bennett 1:249/116.0 (dl776@freenet.carleton.ca)
+ PO Box 21024 Kingston, Ontario K7L 5P5 Canada, eh?

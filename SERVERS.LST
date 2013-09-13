@@ -1,0 +1,41 @@
+nntp server (r/o=read only) groups      main hierarchies        9/1997
+
+amerchem.acs.org            3044        alt, comp, misc, rec
+avsrvr-1.cr.usgs.gov        2833  r/o   alt, comp, misc, gov, rec, sci
+beta.pucpr.br               2708        alt, comp, misc, rec, soc, sci
+cc.owu.edu                  1412  r/o   bit, comp, soc
+cincom.com                  1030        biz, comp, misc
+daifuku-w.daifuku.co.jp     1250        misc, comp, fj
+decsys.vsb.cz               3850  r/o   alt, comp, misc, soc, sci, rec
+deun23.corp.newmont.com     1122        sci, comp, biz
+firewall.bbag.com           1822        alt, comp, misc, rec, sci, soc
+gsc.gsi.com                 12770       most
+l1.newaygo.mi.us            20851       most/almost all
+moon.pepperdine.edu         2012        comp, sci, rec
+mssb.edu.on.ca              3583        biz, sic, comp, soc, misc, alt
+news.cambrianc.on.ca        3900        biz, alt, comp, misc, rec, soc, sci
+news.cti.gr                 5099        most
+news.dma.be                 25434       most/all
+news.dna.affrc.go.jp        5262        alt, sci, comp, misc, rec
+news.gdbnet.ad.jp           38256 r/o   most/all
+news.jscinc.com             3541        alt, comp, rec, misc, sci
+news.kpu-m.ac.jp            1221        comp, sci, rec, fj, alt
+news.math.cinvestav.mx      13450       most/all
+news.medrad.com             1833        comp, sci, rec, misc, talk, biz
+news.nchu.edu.tw            9119  r/o   most
+news.nimo.com               952         comp, news
+news.okidata.com            2647        alt, comp, rec, soc
+news.xanet.edu.cn           1111        comp, sci
+newsfeed.pnl.gov            1474        comp, sci, bit
+next_1.fh-lueneburg.de      1057  r/o   comp, rec, de
+nntp.gmd.de                 3628  r/o   most except alt.*
+nntpserver.pppl.gov         1477        comp, news, misc
+ntucsz.csie.ntu.edu.tw      1511        comp, tw
+serve.installshield.com     947         comp
+server.internetoutlet.net   12790       most/all
+shakti.ncst.ernet.in        1304  r/o   comp, sci, rec
+sirius.data-io.com          4653        alt, bit, rec, comp, sci, soc
+tomcat.admin.navo.hpc.mil   6724        most
+u6000b.lnc.hk               1320        comp, sci, rec, alt
+uranus.m-netz.ch            2312        comp, sci, de
+vpweb2.vapower.com          2818        comp, rec, sci
